@@ -5,9 +5,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.EditText;
 
+import com.chatmodule.util.SoftKeyboardUtil;
 import com.example.tankorbox.chatlibrary.R;
 import com.example.tankorbox.chatlibrary.services.ServiceGenerator;
 import com.example.tankorbox.chatlibrary.services.UserService;
@@ -31,12 +31,19 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         mEdtUsername = findViewById(R.id.edtUsername);
         mEdtPassword = findViewById(R.id.edtPassword);
-
-        (findViewById(R.id.btnLogin)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                login(mEdtUsername.getText().toString(), mEdtPassword.getText().toString());
+        mEdtPassword.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                SoftKeyboardUtil.dismissSoftKeyboard(LoginActivity.this, mEdtPassword);
             }
+        });
+        mEdtUsername.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                SoftKeyboardUtil.dismissSoftKeyboard(LoginActivity.this, mEdtUsername);
+            }
+        });
+
+        (findViewById(R.id.btnLogin)).setOnClickListener(view -> {
+            login(mEdtUsername.getText().toString(), mEdtPassword.getText().toString());
         });
     }
 

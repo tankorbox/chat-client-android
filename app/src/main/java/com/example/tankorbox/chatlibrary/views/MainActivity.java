@@ -8,6 +8,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -82,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements GroupAdapter.Adap
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new GroupAdapter(groups, this));
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
 
     // INITIALIZATIONS
@@ -141,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements GroupAdapter.Adap
 
     private void setTelegramTheme() {
         MainActivity.this.mToolbar.setTitle("My ChatApp");
-        MainActivity.this.getWindow().setBackgroundDrawable(MainActivity.this.getResources().getDrawable(R.drawable.telegram_bkg));
+        MainActivity.this.getWindow().setBackgroundDrawableResource(android.R.color.white);
         this.mToolbar.setBackgroundColor(this.getResources().getColor(R.color.colorPrimaryTelegram));
         if (Build.VERSION.SDK_INT >= 21) {
             this.getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryTelegram));
