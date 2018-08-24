@@ -1,0 +1,5 @@
+package com.example.tankorbox.chatlibrary.config;
+
+public class Config {
+    public static String TOKEN = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFlYmI5YmZiLTAyYTUtNDJlZC05YTVkLTVhMmVlYjkyYjUwZSIsImlhdCI6MTUzMjU3MDE5MCwiZXhwIjoxNTg0MTcwMTkwfQ.fWES2EXbexQiPPPkUjbjvlhr1MiM-idcC26EcpdkegeXXHwz7C5HEBxP5KVyD4gtbCUbSokmbmk3CxuSXJSLUmkGPO6WqAzgSd-FB38pHwUEygF6v4vZEcWwlnTGGdV153Bp3OyQtFIN_REacdLr8K3XwVqMZh604fxqsvuGfyA";
+}
