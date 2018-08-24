@@ -46,7 +46,6 @@ import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -125,8 +124,7 @@ public class ChatActivity extends EmojiCompatActivity implements ChatPanelEventL
                     .subscribe(message -> {
                         if (message.isTyping()) {
                             this.getSupportActionBar().setTitle(income.getDisplayName() + " is typing...");
-                        }
-                        else {
+                        } else {
                             this.getSupportActionBar().setTitle("Telegram");
                         }
                     });
@@ -239,6 +237,16 @@ public class ChatActivity extends EmojiCompatActivity implements ChatPanelEventL
                     @Override
                     public void onNext(MessageGetResponse messageGetResponse) {
                         Log.i(ChatActivity.class.getName(), String.valueOf(messageGetResponse.getMessages().size()));
+                        List<Message> messages = messageGetResponse.getMessages();
+                        for (int i = 0; i < messages.size(); i++) {
+                            Message message = messages.get(i);
+                            if (message.getUserId().equals(logInResponse.getUser().getId())) {
+                                message.setType(MessageType.OUTGOING);
+                            } else {
+                                message.setType(MessageType.INCOME);
+                            }
+                            messages.set(i, message);
+                        }
                         mAdapter.addMessages(messageGetResponse.getMessages());
                     }
 
@@ -292,7 +300,7 @@ public class ChatActivity extends EmojiCompatActivity implements ChatPanelEventL
         Message message = new Message();
         message.setType(MessageType.OUTGOING);
         message.setTimestamp(TimestampUtil.getCurrentTimestamp());
-        message.setContent(this.mBottomPanel.getText());
+        message.setData(this.mBottomPanel.getText());
         message.setGroupId(group.getId());
         SocketHandler.postMessage(mSocket, logInResponse, this.mBottomPanel.getText(), group.getId());
         this.mBottomPanel.setText("");
@@ -302,7 +310,7 @@ public class ChatActivity extends EmojiCompatActivity implements ChatPanelEventL
     @SuppressLint("CheckResult")
     @Override
     public void onTyping(String msg) {
-        SocketHandler.sendTyping(mSocket ,logInResponse, group.getId(), msg);
+        SocketHandler.sendTyping(mSocket, logInResponse, group.getId(), msg);
     }
 
     @SuppressLint("StaticFieldLeak")

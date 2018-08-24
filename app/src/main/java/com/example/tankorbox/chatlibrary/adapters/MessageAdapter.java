@@ -63,7 +63,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = (ViewHolder) holder;
-        viewHolder.content.setText(this.mDataset.get(position).getContent());
+        viewHolder.content.setText(this.mDataset.get(position).getData());
         viewHolder.content.setUseSystemDefault(Boolean.FALSE);
         viewHolder.timestamp.setText(TimestampUtil.formatTimestamp(this.mDataset.get(position).getTimestamp(), "HH:mm"));
     }
