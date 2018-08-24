@@ -28,7 +28,10 @@ import com.example.tankorbox.chatlibrary.helpers.TimestampUtil;
 import com.example.tankorbox.chatlibrary.models.Group;
 import com.example.tankorbox.chatlibrary.models.Message;
 import com.example.tankorbox.chatlibrary.models.MessageType;
+import com.example.tankorbox.chatlibrary.services.MessageService;
+import com.example.tankorbox.chatlibrary.services.ServiceGenerator;
 import com.example.tankorbox.chatlibrary.services.responses.LogInResponse;
+import com.example.tankorbox.chatlibrary.services.responses.MessageGetResponse;
 import com.example.tankorbox.chatlibrary.socket.Events;
 import com.example.tankorbox.chatlibrary.socket.SocketHandler;
 import com.google.gson.Gson;
@@ -42,7 +45,11 @@ import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import io.socket.client.IO;
 import io.socket.client.Manager;
 import io.socket.client.Socket;
@@ -216,6 +223,35 @@ public class ChatActivity extends EmojiCompatActivity implements ChatPanelEventL
         this.mMessages.setLayoutManager(linearLayoutManager);
         this.mAdapter = new MessageAdapter(new ArrayList<Message>());
         this.mMessages.setAdapter(mAdapter);
+        loadMessages();
+    }
+
+    private void loadMessages() {
+        ServiceGenerator.shared().createService(MessageService.class)
+                .getMessages(group.getId()).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<MessageGetResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(MessageGetResponse messageGetResponse) {
+                        Log.i(ChatActivity.class.getName(), String.valueOf(messageGetResponse.getMessages().size()));
+                        mAdapter.addMessages(messageGetResponse.getMessages());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     private void initToolbar() {
