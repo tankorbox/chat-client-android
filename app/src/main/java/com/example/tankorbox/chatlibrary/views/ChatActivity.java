@@ -40,7 +40,9 @@ import com.squareup.picasso.Picasso;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -215,12 +217,12 @@ public class ChatActivity extends EmojiCompatActivity implements ChatPanelEventL
     }
 
     private void initMessageList() {
-        this.mMessages = this.findViewById(R.id.messages);
+        mMessages = this.findViewById(R.id.messages);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(Boolean.TRUE);
-        this.mMessages.setLayoutManager(linearLayoutManager);
-        this.mAdapter = new MessageAdapter(new ArrayList<Message>());
-        this.mMessages.setAdapter(mAdapter);
+        mMessages.setLayoutManager(linearLayoutManager);
+        mAdapter = new MessageAdapter(new ArrayList<Message>());
+        mMessages.setAdapter(mAdapter);
         loadMessages();
     }
 
@@ -236,8 +238,9 @@ public class ChatActivity extends EmojiCompatActivity implements ChatPanelEventL
 
                     @Override
                     public void onNext(MessageGetResponse messageGetResponse) {
-                        Log.i(ChatActivity.class.getName(), String.valueOf(messageGetResponse.getMessages().size()));
-                        List<Message> messages = messageGetResponse.getMessages();
+                        List<Message> messages = new ArrayList<>(messageGetResponse.getMessages());
+                        Comparator<Message> comparator = (o1, o2) -> o1.getCreatedAt().compareTo(o2.getCreatedAt());
+                        Collections.sort(messages, comparator);
                         for (int i = 0; i < messages.size(); i++) {
                             Message message = messages.get(i);
                             if (message.getUserId().equals(logInResponse.getUser().getId())) {
@@ -247,7 +250,8 @@ public class ChatActivity extends EmojiCompatActivity implements ChatPanelEventL
                             }
                             messages.set(i, message);
                         }
-                        mAdapter.addMessages(messageGetResponse.getMessages());
+                        mAdapter.addMessages(messages);
+                        mMessages.smoothScrollToPosition(mAdapter.getItemCount());
                     }
 
                     @Override
@@ -263,14 +267,14 @@ public class ChatActivity extends EmojiCompatActivity implements ChatPanelEventL
     }
 
     private void initToolbar() {
-        this.mToolbar = this.findViewById(R.id.toolbar);
-        this.mToolbar.setTitleTextColor(0xFFFFFFFF);
-        this.mToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
-        this.getWindow().setBackgroundDrawable(this.getResources().getDrawable(R.drawable.telegram_bkg));
-        this.setSupportActionBar(this.mToolbar);
-        this.getSupportActionBar().setTitle("My ChatApp");
-        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        this.getSupportActionBar().setHomeButtonEnabled(true);
+        mToolbar = this.findViewById(R.id.toolbar);
+        mToolbar.setTitleTextColor(0xFFFFFFFF);
+        mToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+        getWindow().setBackgroundDrawable(this.getResources().getDrawable(R.drawable.telegram_bkg));
+        setSupportActionBar(this.mToolbar);
+        getSupportActionBar().setTitle("My ChatApp");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
     }
 
     private void setTelegramTheme() {
@@ -290,7 +294,6 @@ public class ChatActivity extends EmojiCompatActivity implements ChatPanelEventL
 
     @Override
     public void onMicClicked() {
-        Log.i(TAG, "Mic was clicked");
         Toast.makeText(ChatActivity.this, "Mic was clicked!", Toast.LENGTH_SHORT).show();
     }
 
@@ -303,8 +306,8 @@ public class ChatActivity extends EmojiCompatActivity implements ChatPanelEventL
         message.setData(this.mBottomPanel.getText());
         message.setGroupId(group.getId());
         SocketHandler.postMessage(mSocket, logInResponse, this.mBottomPanel.getText(), group.getId());
-        this.mBottomPanel.setText("");
-        this.updateMessageList(message);
+        mBottomPanel.setText("");
+        updateMessageList(message);
     }
 
     @SuppressLint("CheckResult")
@@ -318,7 +321,7 @@ public class ChatActivity extends EmojiCompatActivity implements ChatPanelEventL
         new AsyncTask<Void, Void, Message>() {
             @Override
             protected void onPostExecute(Message message) {
-                ChatActivity.this.updateMessageList(message);
+                updateMessageList(message);
             }
 
             @Override
@@ -328,7 +331,7 @@ public class ChatActivity extends EmojiCompatActivity implements ChatPanelEventL
                     Message outgoing = new Message();
                     outgoing.setType(MessageType.INCOME);
                     outgoing.setTimestamp(TimestampUtil.getCurrentTimestamp());
-                    outgoing.setContent(income.getData());
+                    outgoing.setData(income.getData());
                     outgoing.setGroupId(income.getGroupId());
                     outgoing.setUserId(income.getUserId());
                     return outgoing;
@@ -342,9 +345,8 @@ public class ChatActivity extends EmojiCompatActivity implements ChatPanelEventL
 
     private void updateMessageList(Message message) {
         if (message.getGroupId().equals(group.getId())) {
-            this.mAdapter.getDataset().add(message);
-            this.mAdapter.notifyDataSetChanged();
-            this.mMessages.scrollToPosition(this.mAdapter.getItemCount() - 1);
+            mAdapter.addNewMessage(message, mAdapter.getItemCount());
+            mMessages.smoothScrollToPosition(mAdapter.getItemCount());
         }
     }
 }

@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
 import com.chatmodule.model.layout.EmojiTextView;
 import com.example.tankorbox.chatlibrary.R;
 import com.example.tankorbox.chatlibrary.helpers.TimestampUtil;
@@ -24,11 +23,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public MessageAdapter(List<Message> mDataset) {
         this.mDataset = mDataset;
-    }
-
-    public void addMessages(List<Message> messages) {
-        this.mDataset.addAll(messages);
-        notifyDataSetChanged();
     }
 
     @Override
@@ -73,13 +67,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return this.mDataset.size();
     }
 
-    // GETTERS AND SETTERS
-    public List<Message> getDataset() {
-        return mDataset;
+    public void addNewMessage(Message message, int position) {
+        mDataset.add(message);
     }
 
-    public void setDataset(List<Message> mDataset) {
-        this.mDataset = mDataset;
+    public void addMessages(List<Message> messages) {
+        this.mDataset.addAll(messages);
+        notifyDataSetChanged();
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {

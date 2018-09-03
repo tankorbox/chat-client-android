@@ -10,7 +10,7 @@ public class Body {
     @SerializedName("groupId")
     private String groupId;
 
-    @SerializedName("message")
+    @SerializedName("data")
     private String data;
 
     @SerializedName("isTyping")

@@ -7,11 +7,11 @@ public class Payload {
     @SerializedName("url")
     private String url;
     @SerializedName("authorization")
-    private Authorization authorization;
+    private String authorization;
     @SerializedName("data")
     private Body body;
 
-    public Payload(String url, Authorization authorization, Body body) {
+    public Payload(String url, String authorization, Body body) {
         this.url = url;
         this.authorization = authorization;
         this.body = body;
@@ -25,11 +25,11 @@ public class Payload {
         this.url = url;
     }
 
-    public Authorization getAuthorization() {
+    public String getAuthorization() {
         return authorization;
     }
 
-    public void setAuthorization(Authorization authorization) {
+    public void setAuthorization(String authorization) {
         this.authorization = authorization;
     }
 

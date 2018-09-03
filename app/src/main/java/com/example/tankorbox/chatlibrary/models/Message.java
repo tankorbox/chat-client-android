@@ -27,6 +27,10 @@ public class Message implements Serializable {
     private boolean isTyping;
     @SerializedName("displayName")
     private String displayName;
+    @SerializedName("createdAt")
+    private String createdAt;
+    @SerializedName("updatedAt")
+    private String updatedAt;
 
     public String getDisplayName() {
         return displayName;
@@ -98,5 +102,21 @@ public class Message implements Serializable {
 
     public void setType(MessageType type) {
         this.type = type;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
